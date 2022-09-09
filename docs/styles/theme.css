@@ -373,12 +373,21 @@ a, a:hover, a:active, a:visited {
   margin-right: 20px;
 }
 
+.head .right .social {
+  align-items: center;
+  display: flex;
+}
+
 .head .right .social .link {
+  margin-left: 10px;
   margin-right: 0;
+  font-size: 25px;
 }
 
 .head .right .social img {
   height: 40px;
+  position: relative;
+  top: 4px;
 }
 
 .body h1 {
@@ -390,6 +399,33 @@ a, a:hover, a:active, a:visited {
   line-height: 26px;
   margin: 0;
   padding: 20px 0;
+}
+
+.foot {
+  background-color: #FCFCFC;
+  border-top: 1px solid #CCCCCC;
+  padding: 40px 0;
+}
+
+.foot .container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+} 
+
+.foot .left img {
+  max-width: 200px;
+  width: 100%;
+}
+
+.foot nav {
+  padding: 10px 30px;
+}
+
+.foot nav a {
+  display: block;
+  line-height: 40px;
+  text-decoration: none;
 }
 
 #preload {
@@ -428,10 +464,17 @@ a, a:hover, a:active, a:visited {
   }
 
   .head .right .social {
-    padding-top: 10px;
+    justify-content: center;
   }
 
   .head .right .social .link {
     margin: 0;
+  }
+}
+
+@media(max-width: 570px) {
+  .foot .container {
+    display: block;
+    text-align: center;
   }
 }
