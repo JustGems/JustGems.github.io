@@ -128,9 +128,10 @@ window.addEventListener('web3sdk-ready', async _ => {
         row.parentNode.removeChild(row)
       })
     }
-    container.querySelector('a.add').addEventListener('click', e => {
+    const add = container.querySelector('a.add')
+    add.addEventListener('click', e => {
       const row = theme.toElement(template)
-      container.prepend(row)
+      container.insertBefore(row, add)
       init(row)
     })
   })
@@ -161,7 +162,8 @@ window.addEventListener('web3sdk-ready', async _ => {
     const metadata = {
       name: document.getElementById('field-name').value,
       description: document.getElementById('field-description').value,
-      image: document.getElementById('field-image-uri').value
+      image: document.getElementById('field-image-uri').value,
+      external_url: `https://www.justgems.io/gem.html?token=${Web3SDK.state.nextTokenId}`
     }
     Array.from(document.querySelectorAll('div.field-attribute div.field-row')).forEach(row => {
       const name = row.querySelector('input.name').value

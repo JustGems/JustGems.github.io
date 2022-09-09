@@ -3,7 +3,6 @@ window.addEventListener('web3sdk-ready', async _ => {
   // Variables
   
   const network = Web3SDK.network('polygon')
-  const nft = network.contract('nft')
   const sale = network.contract('sale')
   const metadata = network.contract('metadata')
   const usdc = network.contract('usdc')
@@ -98,15 +97,15 @@ window.addEventListener('web3sdk-ready', async _ => {
   // Events
 
   window.addEventListener('web3sdk-connected', async _ => {
-    Web3SDK.state.nextTokenId = parseInt(urlparams('token'))
-    if (!Web3SDK.state.nextTokenId) return (window.location.href = './create.html')
+    Web3SDK.state.tokenId = parseInt(urlparams('token'))
+    if (!Web3SDK.state.tokenId) return (window.location.href = './create.html')
 
     //get metadata
-    const uri = await metadata.read().tokenURI(Web3SDK.state.nextTokenId)
+    const uri = await metadata.read().tokenURI(Web3SDK.state.tokenId)
     const response = await fetch(uri)
     const json = await response.json()
     //get price
-    const price = await sale.read()['priceOf(address,uint256)'](usdc.address, Web3SDK.state.nextTokenId)
+    const price = await sale.read()['priceOf(address,uint256)'](usdc.address, Web3SDK.state.tokenId)
 
     const fields = {
       name: document.getElementById('field-name'),
@@ -150,7 +149,10 @@ window.addEventListener('web3sdk-ready', async _ => {
           '{NAME}': trait.trait_type,
           '{VALUE}': trait.value
         })
-        document.querySelector('div.field-attribute').prepend(row)
+
+        const container = document.querySelector('div.field-attribute')
+        const add = container.querySelector('a.add')
+        container.insertBefore(row, add)
         row.querySelector('a.remove').addEventListener('click', _ => {
           row.parentNode.removeChild(row)
         })
@@ -199,9 +201,10 @@ window.addEventListener('web3sdk-ready', async _ => {
         row.parentNode.removeChild(row)
       })
     }
-    container.querySelector('a.add').addEventListener('click', e => {
+    const add = container.querySelector('a.add')
+    add.addEventListener('click', e => {
       const row = theme.toElement(template)
-      container.prepend(row)
+      container.insertBefore(row, add)
       init(row)
     })
   })
@@ -232,7 +235,8 @@ window.addEventListener('web3sdk-ready', async _ => {
     const metadata = {
       name: document.getElementById('field-name').value,
       description: document.getElementById('field-description').value,
-      image: document.getElementById('field-image-uri').value
+      image: document.getElementById('field-image-uri').value,
+      external_url: `https://www.justgems.io/gem.html?token=${Web3SDK.state.tokenId}`
     }
     Array.from(document.querySelectorAll('div.field-attribute div.field-row')).forEach(row => {
       const name = row.querySelector('input.name').value
@@ -255,7 +259,7 @@ window.addEventListener('web3sdk-ready', async _ => {
     }
     //upload metadata
     notify('info', 'Uploading metadata...')
-    const file = new File([JSON.stringify(metadata, null, 2)], `${Web3SDK.state.nextTokenId}.json`, {
+    const file = new File([JSON.stringify(metadata, null, 2)], `${Web3SDK.state.tokenId}.json`, {
       type: 'application/json',
     });
     const json = await upload(file)
@@ -287,12 +291,12 @@ window.addEventListener('web3sdk-ready', async _ => {
     })
 
     await write(metadata, 'setData', [
-      Web3SDK.state.nextTokenId,
+      Web3SDK.state.tokenId,
       uri, 
       traits,
       values
     ], () => {
-      notify('success', `Metadata updated for token ${Web3SDK.state.nextTokenId}`)
+      notify('success', `Metadata updated for token ${Web3SDK.state.tokenId}`)
     }, (e, message) => {
       notify('error', message)
     })
@@ -304,10 +308,10 @@ window.addEventListener('web3sdk-ready', async _ => {
 
     await write(sale, 'setPrice(address,uint256,uint256)', [
       token,
-      Web3SDK.state.nextTokenId,
+      Web3SDK.state.tokenId,
       price
     ], () => {
-      notify('success', `Price updated for token ${Web3SDK.state.nextTokenId}`)
+      notify('success', `Price updated for token ${Web3SDK.state.tokenId}`)
     }, (e, message) => {
       notify('error', message)
     })
