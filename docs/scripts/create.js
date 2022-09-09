@@ -3,7 +3,8 @@ window.addEventListener('web3sdk-ready', async _ => {
   // Variables
   
   const network = Web3SDK.network('polygon')
-  const nft = network.contract('nft')
+  const sale = network.contract('sale')
+  const metadata = network.contract('metadata')
   const usdc = network.contract('usdc')
 
   //------------------------------------------------------------------//
@@ -22,10 +23,69 @@ window.addEventListener('web3sdk-ready', async _ => {
     return await response.json()
   }
 
+  const write = async (contract, method, args, success, error) => {
+    try {
+      await contract.gas(Web3SDK.state.account, 0)[method](...args)
+    } catch(e) {
+      const pattern = /have (\d+) want (\d+)/
+      const matches = e.message.match(pattern)
+      if (matches && matches.length === 3) {
+        e.message = e.message.replace(pattern, `have ${
+          Web3SDK.toEther(matches[1], 'int').toFixed(5)
+        } ETH want ${
+          Web3SDK.toEther(matches[2], 'int').toFixed(5)
+        } ETH`)
+      }
+      return error(e, e.message.replace('err: i', 'I'))
+    }
+
+    try {
+      const confirmations = 2
+      await contract.write(Web3SDK.state.account, 0, {
+        hash: function(resolve, reject, hash) {
+          notify(
+           'success', 
+           `Transaction started on <a href="${network.config.chain_scanner}/tx/${hash}" target="_blank">
+             ${network.config.chain_scanner}
+           </a>. Please stay on this page and wait for ${confirmations} confirmations...`,
+           1000000
+          )
+        },
+        confirmation: function(resolve, reject, confirmationNumber, receipt) {
+          if (confirmationNumber > confirmations) return
+          if (confirmationNumber == confirmations) {
+           notify('success', `${confirmationNumber}/${confirmations} confirmed on <a href="${network.config.chain_scanner}/tx/${receipt.transactionHash}" target="_blank">
+             ${network.config.chain_scanner}
+           </a>.`)
+           success()
+           resolve()
+           return
+          }
+          notify('success', `${confirmationNumber}/${confirmations} confirmed on <a href="${network.config.chain_scanner}/tx/${receipt.transactionHash}" target="_blank">
+           ${network.config.chain_scanner}
+          </a>. Please stay on this page and wait for ${confirmations} confirmations...`, 1000000)
+        },
+        receipt: function(resolve, reject, receipt) {
+          notify(
+           'success', 
+           `Confirming on <a href="${network.config.chain_scanner}/tx/${receipt.transactionHash}" target="_blank">
+             ${network.config.chain_scanner}
+           </a>. Please stay on this page and wait for ${confirmations} confirmations...`,
+           1000000
+          )
+        }
+      })[method](...args)
+    } catch(e) {
+      return error(e, e.message.replace('err: i', 'I'))
+    }
+  }
+
   //------------------------------------------------------------------//
   // Events
 
-  window.addEventListener('web3sdk-connected', async _ => {})
+  window.addEventListener('web3sdk-connected', async _ => {
+    Web3SDK.state.nextTokenId = parseInt(await metadata.read().lastTokenId()) + 1
+  })
 
   window.addEventListener('web3sdk-disconnected', async _ => {})
 
@@ -124,8 +184,7 @@ window.addEventListener('web3sdk-ready', async _ => {
     }
     //upload metadata
     notify('info', 'Uploading metadata...')
-    const nextId = parseInt(await nft.read().lastTokenId()) + 1
-    const file = new File([JSON.stringify(metadata, null, 2)], `${nextId}.json`, {
+    const file = new File([JSON.stringify(metadata, null, 2)], `${Web3SDK.state.nextTokenId}.json`, {
       type: 'application/json',
     });
     const json = await upload(file)
@@ -140,79 +199,47 @@ window.addEventListener('web3sdk-ready', async _ => {
     theme.hide('section.section-3', false)
   })
 
-  window.addEventListener('write-click', async _ => {
+  window.addEventListener('set-metadata-click', async _ => {
     const uri = document.getElementById('field-uri').value.trim()
+
+    const traits = []
+    const values = []
+    Array.from(
+      document.querySelectorAll('div.field-attribute div.field-row')
+    ).forEach(row => {
+      const name = row.querySelector('input.name').value
+      const value = row.querySelector('input.value').value
+      if (name.trim().length && value.trim().length) {
+        traits.push(name.trim())
+        values.push(value.trim())
+      }
+    })
+
+    await write(metadata, 'setData', [
+      Web3SDK.state.nextTokenId,
+      uri, 
+      traits,
+      values
+    ], () => {
+      notify('success', `Metadata added for token ${Web3SDK.state.nextTokenId}`)
+    }, (e, message) => {
+      notify('error', message)
+    })
+  })
+
+  window.addEventListener('set-price-click', async _ => {
     const token = usdc.address
     const price = document.getElementById('field-price').value * 1000000
-    //gas check
-    notify('info', 'Gas Check...')
-    try {
-      await nft.gas(Web3SDK.state.account, 0)['mintable(string,address,uint256)'](
-        uri, 
-        token, 
-        price
-      )
-    } catch(e) {
-      const pattern = /have (\d+) want (\d+)/
-      const matches = e.message.match(pattern)
-      if (matches && matches.length === 3) {
-        e.message = e.message.replace(pattern, `have ${
-          Web3SDK.toEther(matches[1], 'int').toFixed(5)
-        } ETH want ${
-          Web3SDK.toEther(matches[2], 'int').toFixed(5)
-        } ETH`)
-      }
-      notify('error', e.message.replace('err: i', 'I'))
-      console.error(e)
-      return
-    }
-    //now write
-    notify('info', 'Adding to blockchain...')
-    try {
-      const confirmations = 2
-      await nft.write(Web3SDK.state.account, 0, {
-        hash: function(resolve, reject, hash) {
-          notify(
-           'success', 
-           `Transaction started on <a href="${network.config.chain_scanner}/tx/${hash}" target="_blank">
-             ${network.config.chain_scanner}
-           </a>. Please stay on this page and wait for ${confirmations} confirmations...`,
-           1000000
-          )
-        },
-        confirmation: function(resolve, reject, confirmationNumber, receipt) {
-          if (confirmationNumber > confirmations) return
-          if (confirmationNumber == confirmations) {
-           notify('success', `${confirmationNumber}/${confirmations} confirmed on <a href="${network.config.chain_scanner}/tx/${receipt.transactionHash}" target="_blank">
-             ${network.config.chain_scanner}
-           </a>.`)
-           window.location.reload()
-           resolve()
-           return
-          }
-          notify('success', `${confirmationNumber}/${confirmations} confirmed on <a href="${network.config.chain_scanner}/tx/${receipt.transactionHash}" target="_blank">
-           ${network.config.chain_scanner}
-          </a>. Please stay on this page and wait for ${confirmations} confirmations...`, 1000000)
-        },
-        receipt: function(resolve, reject, receipt) {
-          notify(
-           'success', 
-           `Confirming on <a href="${network.config.chain_scanner}/tx/${receipt.transactionHash}" target="_blank">
-             ${network.config.chain_scanner}
-           </a>. Please stay on this page and wait for ${confirmations} confirmations...`,
-           1000000
-          )
-        }
-      })['mintable(string,address,uint256)'](
-        uri, 
-        token, 
-        price
-      )
-    } catch(e) {
-      notify('error', e.message.replace('err: i', 'I'))
-      console.error(e)
-      return
-    }
+
+    await write(sale, 'setPrice(address,uint256,uint256)', [
+      token,
+      Web3SDK.state.nextTokenId,
+      price
+    ], () => {
+      notify('success', `Price added for token ${Web3SDK.state.nextTokenId}`)
+    }, (e, message) => {
+      notify('error', message)
+    })
   })
 
   //------------------------------------------------------------------//

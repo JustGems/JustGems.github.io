@@ -12,6 +12,17 @@ async function deploy(name, ...params) {
   return contract;
 }
 
+function getRole(name) {
+  if (!name || name === 'DEFAULT_ADMIN_ROLE') {
+    return '0x0000000000000000000000000000000000000000000000000000000000000000';
+  }
+
+  return '0x' + Buffer.from(
+    hardhat.ethers.utils.solidityKeccak256(['string'], [name]).slice(2)
+    , 'hex'
+  ).toString('hex');
+}
+
 async function main() {
   //get network and admin
   const network = hardhat.config.networks[hardhat.config.defaultNetwork]

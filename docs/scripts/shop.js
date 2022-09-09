@@ -3,7 +3,8 @@ window.addEventListener('web3sdk-ready', async _ => {
   // Variables
   
   const network = Web3SDK.network('polygon')
-  const nft = network.contract('nft')
+  const index = network.contract('index')
+  const metadata = network.contract('metadata')
   const usdc = network.contract('usdc')
 
   const template = {
@@ -23,32 +24,26 @@ window.addEventListener('web3sdk-ready', async _ => {
   //------------------------------------------------------------------//
   // Functions 
 
-  const getDatabase = async callback => {
-    const database = []
-    const lastTokenId = await nft.read().lastTokenId()
-    for (let i = 0; i < lastTokenId; i++) {
-      const uri = await nft.read().tokenURI(i + 1)
-      const price = await nft.read().priceOf(usdc.address, i + 1)
-      let owner = null
-      try {
-        owner = await nft.read().ownerOf(i + 1)
-      } catch(e) {}
+  const search = async (traits, values, callback) => {
+    const lastTokenId = await metadata.read().lastTokenId()
+    const search = index.read()['search(address,uint256,uint256,string[],string[])']
+    const results = await search(usdc.address, 1, lastTokenId, traits, values)
 
-      const response = await fetch(uri)
+    for (const row of results) {
+      const response = await fetch(row.uri)
       const json = await response.json()
-      const row = {
-        id: i + 1,
+
+      callback({
+        id: row.id,
         name: json.name,
         description: json.description,
         image: json.image,
-        price: owner ? 0 : price
-      }
-
-      callback(row)
-      database.push(row)
+        minted: row.minted,
+        price: row.price
+      })
     }
 
-    return database
+    return results
   }
 
   //------------------------------------------------------------------//
@@ -56,12 +51,13 @@ window.addEventListener('web3sdk-ready', async _ => {
 
   window.addEventListener('web3sdk-connected', async _ => {
     results.innerHTML = ''
-    getDatabase(row => {
+
+    search([], [], row => {
       const item = theme.toElement(template.item, {
         '{ID}': row.id,
         '{IMAGE}': row.image,
         '{NAME}': row.name,
-        '{PRICE_HIDE}': parseInt(row.price) ? '': ' hide',
+        '{PRICE_HIDE}': row.minted ? ' hide': '',
         '{PRICE}': parseInt(row.price) ? formatter.format(row.price / 1000000).substring(1): ''
       })
 

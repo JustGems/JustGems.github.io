@@ -43,7 +43,7 @@ module.exports = {
         nft: '0xb416c77F0728EEe9089DdfCc6CCB4b9Cb2575294',
         metadata: '0xfa08Ad07929b9F21DF3050135a0c6590885471e5',
         sale: '0x6dE9c79560b0E449E1b3D4C2445Bd416A869731E',
-        index: '0x47A0Fbcf14Df5127257495Bee63221e0f4417ec4',
+        index: '0x997AD53E22a1b1fC3E519dd6709D9701447B0E2A',
         store: '0x72B3Dae98aBC8e3CcB4fa4AFE0A4cbb26bf93a31'
       }
     },

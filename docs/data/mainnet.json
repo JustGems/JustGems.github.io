@@ -1627,6 +1627,93 @@
       {
         "inputs": [
           {
+            "internalType": "uint256",
+            "name": "tokenId",
+            "type": "uint256"
+          }
+        ],
+        "name": "detail",
+        "outputs": [
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+              },
+              {
+                "internalType": "string",
+                "name": "uri",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "price",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "minted",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct JustGemsIndex.Token",
+            "name": "",
+            "type": "tuple"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "contract IERC20",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tokenId",
+            "type": "uint256"
+          }
+        ],
+        "name": "detail",
+        "outputs": [
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+              },
+              {
+                "internalType": "string",
+                "name": "uri",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "price",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "minted",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct JustGemsIndex.Token",
+            "name": "",
+            "type": "tuple"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "internalType": "bytes32",
             "name": "role",
             "type": "bytes32"
@@ -1754,6 +1841,11 @@
           {
             "components": [
               {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+              },
+              {
                 "internalType": "string",
                 "name": "uri",
                 "type": "string"
@@ -1805,6 +1897,11 @@
           {
             "components": [
               {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+              },
+              {
                 "internalType": "string",
                 "name": "uri",
                 "type": "string"
@@ -1855,6 +1952,11 @@
         "outputs": [
           {
             "components": [
+              {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+              },
               {
                 "internalType": "string",
                 "name": "uri",
@@ -1911,6 +2013,11 @@
         "outputs": [
           {
             "components": [
+              {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+              },
               {
                 "internalType": "string",
                 "name": "uri",

@@ -17,6 +17,7 @@ contract JustGemsIndex is AccessControl{
   // ============ Structs ============
 
   struct Token {
+    uint256 id;
     string uri;
     uint256 price;
     bool minted;
@@ -39,6 +40,33 @@ contract JustGemsIndex is AccessControl{
   }
 
   // ============ Read Methods ============
+
+  /**
+   * @dev Return `tokenId` info
+   */
+  function detail(uint256 tokenId) public view returns(Token memory) {
+    return Token(
+      tokenId,
+      _metadata.tokenURI(tokenId),
+      _saleable.priceOf(tokenId),
+      _saleable.minted(tokenId) != address(0)
+    );
+  }
+
+  /**
+   * @dev Return `tokenId` info
+   */
+  function detail(
+    IERC20 token, 
+    uint256 tokenId
+  ) public view returns(Token memory) {
+    return Token(
+      tokenId,
+      _metadata.tokenURI(tokenId),
+      _saleable.priceOf(token, tokenId),
+      _saleable.minted(tokenId) != address(0)
+    );
+  }
 
   /**
    * @dev Return tokens given criteria
@@ -76,11 +104,7 @@ contract JustGemsIndex is AccessControl{
     //now make an array
     Token[] memory results = new Token[](tokenIds.length);
     for (uint256 i; i < tokenIds.length; i++) {
-      results[i] = Token(
-        _metadata.tokenURI(tokenIds[i]),
-        _saleable.priceOf(tokenIds[i]),
-        _saleable.minted(tokenIds[i]) != address(0)
-      );
+      results[i] = detail(tokenIds[i]);
     }
 
     return results;
@@ -125,11 +149,7 @@ contract JustGemsIndex is AccessControl{
     //now make an array
     Token[] memory results = new Token[](tokenIds.length);
     for (uint256 i; i < tokenIds.length; i++) {
-      results[i] = Token(
-        _metadata.tokenURI(tokenIds[i]),
-        _saleable.priceOf(token, tokenIds[i]),
-        _saleable.minted(tokenIds[i]) != address(0)
-      );
+      results[i] = detail(token, tokenIds[i]);
     }
 
     return results;

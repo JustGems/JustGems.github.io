@@ -3,6 +3,8 @@ window.addEventListener('web3sdk-ready', async _ => {
   // Variables
   
   const network = Web3SDK.network('polygon')
+  const index = network.contract('index')
+  const sale = network.contract('sale')
   const nft = network.contract('nft')
   const usdc = network.contract('usdc')
 
@@ -38,12 +40,8 @@ window.addEventListener('web3sdk-ready', async _ => {
   }
 
   const write = async (contract, method, args, success, error) => {
-    const params = { to: contract.address, from: Web3SDK.state.account }
-    const rpc = contract.resource.methods[method](...args)
-    
-    //gas check
     try {
-      await rpc.estimateGas(params)
+      await contract.gas(Web3SDK.state.account, 0)[method](...args)
     } catch(e) {
       const pattern = /have (\d+) want (\d+)/
       const matches = e.message.match(pattern)
@@ -54,53 +52,69 @@ window.addEventListener('web3sdk-ready', async _ => {
           Web3SDK.toEther(matches[2], 'int').toFixed(5)
         } ETH`)
       }
-
-      console.error(e)
-      return error(e.message.replace('err: i', 'I'))
+      return error(e, e.message.replace('err: i', 'I'))
     }
-    //now write
-    const confirmations = 2
-    const emitter = rpc.send(params)
-
-    //listen to observers
-    emitter.on('transactionHash', function(hash) {
-      notify(
-        'success', 
-        `Transaction started on <a href="${network.config.chain_scanner}/tx/${hash}" target="_blank">
-          ${network.config.chain_scanner}
-        </a>. Please stay on this page and wait for ${confirmations} confirmations...`,
-        1000000
-      )
-    });
-
-    emitter.on('confirmation', function(confirmationNumber, receipt) {
-      if (confirmationNumber > confirmations) return
-      if (confirmationNumber == confirmations) {
-        notify('success', `${confirmationNumber}/${confirmations} confirmed on <a href="${network.config.chain_scanner}/tx/${receipt.transactionHash}" target="_blank">
-          ${network.config.chain_scanner}
-        </a>.`)
-        return success()
-      }
-      notify('success', `${confirmationNumber}/${confirmations} confirmed on <a href="${network.config.chain_scanner}/tx/${receipt.transactionHash}" target="_blank">
-        ${network.config.chain_scanner}
-      </a>. Please stay on this page and wait for ${confirmations} confirmations...`, 1000000)
-    });
-
-    emitter.on('receipt', function(receipt) {
-      notify(
-        'success', 
-        `Confirming on <a href="${network.config.chain_scanner}/tx/${receipt.transactionHash}" target="_blank">
-          ${network.config.chain_scanner}
-        </a>. Please stay on this page and wait for ${confirmations} confirmations...`,
-        1000000
-      )
-    });
 
     try {
-      await emitter
+      const confirmations = 2
+      await contract.write(Web3SDK.state.account, 0, {
+        hash: function(resolve, reject, hash) {
+          notify(
+           'success', 
+           `Transaction started on <a href="${network.config.chain_scanner}/tx/${hash}" target="_blank">
+             ${network.config.chain_scanner}
+           </a>. Please stay on this page and wait for ${confirmations} confirmations...`,
+           1000000
+          )
+        },
+        confirmation: function(resolve, reject, confirmationNumber, receipt) {
+          if (confirmationNumber > confirmations) return
+          if (confirmationNumber == confirmations) {
+           notify('success', `${confirmationNumber}/${confirmations} confirmed on <a href="${network.config.chain_scanner}/tx/${receipt.transactionHash}" target="_blank">
+             ${network.config.chain_scanner}
+           </a>.`)
+           success()
+           resolve()
+           return
+          }
+          notify('success', `${confirmationNumber}/${confirmations} confirmed on <a href="${network.config.chain_scanner}/tx/${receipt.transactionHash}" target="_blank">
+           ${network.config.chain_scanner}
+          </a>. Please stay on this page and wait for ${confirmations} confirmations...`, 1000000)
+        },
+        receipt: function(resolve, reject, receipt) {
+          notify(
+           'success', 
+           `Confirming on <a href="${network.config.chain_scanner}/tx/${receipt.transactionHash}" target="_blank">
+             ${network.config.chain_scanner}
+           </a>. Please stay on this page and wait for ${confirmations} confirmations...`,
+           1000000
+          )
+        }
+      })[method](...args)
     } catch(e) {
-      console.error(e)
-      return error(e.message.replace('err: i', 'I'))
+      return error(e, e.message.replace('err: i', 'I'))
+    }
+  }
+
+  const detail = async tokenId => {
+    let token = null
+    try {
+      token = await index.read().detail(usdc.address, tokenId)
+    } catch(e) {
+      return null
+    }
+
+    const response = await fetch(token.uri)
+    const json = await response.json()
+
+    return {
+      id: tokenId,
+      name: json.name,
+      description: json.description,
+      attributes: json.attributes,
+      image: json.image,
+      minted: token.minted,
+      price: token.price
     }
   }
 
@@ -108,23 +122,9 @@ window.addEventListener('web3sdk-ready', async _ => {
   // Events
 
   window.addEventListener('web3sdk-connected', async _ => {
-    const lastTokenId = await nft.read().lastTokenId()
-    let owner = null
-    try {
-      owner = await nft.read().ownerOf(tokenId)
-    } catch(e) {}
-    const mintable = tokenId <= lastTokenId && !owner
-    const price = await nft.read()['priceOf(address,uint256)'](usdc.address, tokenId)
-    const uri = await nft.read().tokenURI(tokenId)
-    const response = await fetch(uri)
-    const json = await response.json()
-    const row = {
-      id: tokenId,
-      name: json.name,
-      description: json.description,
-      attributes: json.attributes,
-      image: json.image,
-      price: mintable ? price : 0
+    const row = await detail(tokenId)
+    if (!row) {
+      window.location.href = './shop.html'
     }
 
     results.innerHTML = ''
@@ -134,8 +134,8 @@ window.addEventListener('web3sdk-ready', async _ => {
       '{IMAGE}': row.image,
       '{NAME}': row.name,
       '{DESCRIPTION}': row.description,
-      '{ACTION}': mintable ? 'MINT NOW': 'VIEW ON OPENSEA',
-      '{PRICE_HIDE}': parseInt(row.price) ? '': ' hide',
+      '{ACTION}': !row.minted ? 'MINT NOW': 'VIEW ON OPENSEA',
+      '{PRICE_HIDE}': row.minted ? ' hide': '',
       '{PRICE}': parseInt(row.price) ? formatter.format(row.price / 1000000).substring(1): ''
     })
 
@@ -158,27 +158,28 @@ window.addEventListener('web3sdk-ready', async _ => {
   window.addEventListener('web3sdk-disconnected',  async _ => {})
 
   window.addEventListener('mint-click',  async _ => {
-    let owner = null
-    try {
-      owner = await nft.read().ownerOf(tokenId)
-    } catch(e) {}
-    if (owner) return (window.location.href = `${network.config.chain_marketplace}/${nft.address}/${tokenId}`)
+    const row = await detail(tokenId)
+    if (!row) {
+      return notify('error', `Token ${tokenId} not found.`)
+    }
+
+    if (row.minted) {
+      return window.open(`${network.config.chain_marketplace}/${nft.address}/${tokenId}`)
+    }
 
     //check balance
-    const price = await nft.read()['priceOf(address,uint256)'](usdc.address, tokenId)
     const balance = await usdc.read().balanceOf(Web3SDK.state.account)
-    if (price > balance) return notify('error', 'You dont have enough USDC')
-
-    const allowance = await usdc.read().allowance(Web3SDK.state.account, nft.address)
+    if (row.price > balance) return notify('error', 'You dont have enough USDC')
+    const allowance = await usdc.read().allowance(Web3SDK.state.account, sale.address)
     if (allowance == 0) {
-      return write(usdc, 'approve', [nft.address, price], () => {
+      return write(usdc, 'approve', [sale.address, row.price], () => {
         window.dispatchEvent(new Event('mint-click'))
       }, e => {
         return notify('error', e)
       })
     }
 
-    return write(nft, 'mint(address,uint256,address)', [
+    return write(sale, 'mint(address,uint256,address)', [
       usdc.address, 
       tokenId,
       Web3SDK.state.account
