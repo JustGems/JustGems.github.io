@@ -1,0 +1,43 @@
+.results {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.results .item {
+  border: 1px solid #EFEFEF;
+  cursor: pointer;
+  flex-basis: calc(33.33% - 22px);
+  margin: 0 20px 0 0;
+}
+
+.results .item .preview img {
+  width: 100%;
+}
+
+.results .item .info {
+  padding: 10px;
+}
+
+.results .item .info h3 {
+  line-height: 30px;
+  height: 60px;
+  margin-top: 0;
+  overflow: hidden;
+}
+
+.results .item .info .price {
+  padding-left: 24px;
+  position: relative;
+}
+
+.results .item .info .price::before {
+  background-image: url(/images/usdc.png);
+  background-repeat: no-repeat;
+  background-size: 20px;
+  content: " ";
+  height: 20px;
+  left: 0;
+  position: absolute;
+  top: 2px;
+  width: 20px;
+}

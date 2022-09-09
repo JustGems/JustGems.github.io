@@ -1,0 +1,50 @@
+.disconnected {
+  padding: 100px 0;
+  text-align: center;
+}
+
+.connected {
+  padding: 50px 0;
+}
+
+.btn-primary {
+  text-transform: uppercase;
+}
+
+.btn-secondary {
+  font-size: 12px;
+}
+
+.skip {
+  display: inline-block;
+  font-size: 14px;
+  margin-left: 10px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.form-row {
+  padding: 10px 0;
+}
+
+.form-row img {
+  width: 100%;
+}
+
+.field-attribute .add {
+  margin-top: 5px;
+}
+
+.field-attribute .field-row {
+  align-items: center;
+  display: flex;
+}
+
+.field-attribute .field-row input {
+  margin: 5px 5px 5px 0;
+}
+
+.field-attribute .field-row .remove {
+  display: inline-block;
+  padding: 0 10px;
+}

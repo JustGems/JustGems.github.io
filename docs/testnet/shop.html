@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>Shop Now | Just Gems</title>
+    <meta name="description" content="" />
+    <meta property="og:title" content="Just Gems" />
+    <meta property="og:description" content="" />
+    <meta property="og:image" content="https://www.justgems.io/images/banner.png" />
+    <meta property="og:url" content="https://www.justgems.io/shop" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@" />
+    <meta name="twitter:title" content="Just Gems" />
+    <meta name="twitter:description" content="" />
+    <meta name="twitter:image" content="https://www.justgems.io/images/banner.png" />
+
+    <link rel="shortcut icon" href="/favicon.png" type="image/png" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+
+    <link rel="stylesheet" type="text/css" href="/fonts/playfair/font.css" /> 
+    <link rel="stylesheet" type="text/css" href="/fonts/poppins/font.css" />
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="/styles/theme.css?v1" />
+    <link rel="stylesheet" type="text/css" href="/styles/shop.css?v1" />
+  </head>
+  <body>
+    <header class="head">
+      <div class="container">
+        <nav class="left">
+          <a class="logo" href="/">
+            <img src="/images/logo/logo-justgems-9.png" />
+          </a>
+        </nav>
+        <nav class="right">
+          <a class="link" href="./shop.html">Shop</a>
+          <div class="social">
+            <a class="link" href="https://opensea.io/collection/just-gems" target="_blank">
+              <img src="/images/social-opensea-icon.svg" />
+            </a>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <main class="body">
+      <section class="section section-1">
+        <div class="container">
+          <h1>Shop For Gems</h1>
+          <div class="results"></div>
+        </div>
+      </section>
+    </main>
+    <footer class="foot"></footer>
+    <template id="template-item">
+      <div class="item" data-do="detail" data-id="{ID}" data-on="click">
+        <div class="preview">
+          <img src="{IMAGE}" loading="lazy" />
+        </div>
+        <div class="info">
+          <h3>{NAME}</h3>
+          <div class="price{PRICE_HIDE}">{PRICE}</div>
+        </div>
+      </div>
+    </template>
+    <script id="network" data-value="testnet"></script>
+    <script type="text/javascript" src="/scripts/lib/doon.js"></script>
+    <script type="text/javascript" src="/scripts/lib/theme.js"></script>
+    <script type="text/javascript" src="/scripts/lib/web3.js"></script>
+    <script type="text/javascript" src="/scripts/lib/web3modal.js"></script>
+    <script type="text/javascript" src="/scripts/lib/web3sdk.js"></script>
+    <script type="text/javascript" src="/scripts/lib/walletconnect.js"></script>
+    <script type="text/javascript" src="/scripts/lib/fortmatic.js"></script>
+    <script type="text/javascript" src="/scripts/lib/notify.js"></script>
+    <script type="text/javascript" src="/scripts/shop.js?v1"></script>
+    <script type="text/javascript" src="/scripts/connect.js"></script>
+  </body>
+</html>
