@@ -392,6 +392,22 @@ a, a:hover, a:active, a:visited {
   padding: 20px 0;
 }
 
+#preload {
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.65);
+  bottom: 0;
+  color: #FFFFFF;
+  display: flex;
+  font-size: 100px;
+  left: 0;
+  justify-content: center;
+  overflow: auto;
+  padding: 0 20px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 2000;
+}
 
 @media(max-width: 767px) {
   .head .container {

@@ -10,7 +10,7 @@
   const WalletConnectProvider = window.WalletConnectProvider.default
   const Fortmatic = window.Fortmatic
 
-  const providers = {
+  Web3SDK.providers = {
     walletconnect: {
       package: WalletConnectProvider,
       options: {
@@ -79,7 +79,7 @@
   // Events
 
   window.addEventListener('connect-click', _ => {
-    network.connectCB(providers, connected, disconnected, listening === false)
+    network.connectCB(Web3SDK.providers, connected, disconnected, listening === false)
     listening = true
   })
 

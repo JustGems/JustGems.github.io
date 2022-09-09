@@ -3,6 +3,7 @@ window.addEventListener('web3sdk-ready', async _ => {
   // Variables
   
   const network = Web3SDK.network('polygon')
+  const nft = network.contract('nft')
   const index = network.contract('index')
   const metadata = network.contract('metadata')
   const usdc = network.contract('usdc')
@@ -30,6 +31,15 @@ window.addEventListener('web3sdk-ready', async _ => {
     const results = await search(usdc.address, 1, lastTokenId, traits, values)
 
     for (const row of results) {
+      let owner = null
+      try {
+        owner = await nft.read().ownerOf(row.id)
+      } catch(e) {}
+
+      if (row.minted && !owner) {
+        continue
+      }
+
       const response = await fetch(row.uri)
       const json = await response.json()
 
@@ -49,7 +59,15 @@ window.addEventListener('web3sdk-ready', async _ => {
   //------------------------------------------------------------------//
   // Events
 
-  window.addEventListener('web3sdk-connected', async _ => {
+  window.addEventListener('detail-click',  async e => {
+    window.location.href = `./gem.html?token=${e.for.getAttribute('data-id')}`
+  })
+
+  //------------------------------------------------------------------//
+  // Initialize
+
+  //initialize asyncronously
+  ;(async _ => {
     results.innerHTML = ''
 
     search([], [], row => {
@@ -63,15 +81,7 @@ window.addEventListener('web3sdk-ready', async _ => {
 
       results.appendChild(item)
       window.doon(item)
+      theme.hide('#preload', true)
     })
-  })
-
-  window.addEventListener('web3sdk-disconnected',  async _ => {})
-
-  window.addEventListener('detail-click',  async e => {
-    window.location.href = `./gem.html?token=${e.for.getAttribute('data-id')}`
-  })
-
-  //------------------------------------------------------------------//
-  // Initialize
+  })();
 })

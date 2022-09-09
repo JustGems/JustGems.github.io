@@ -1,5 +1,15 @@
 const { expect, deploy, bindContract, getRole } = require('./utils');
 
+function redeem(tokenId) {
+  return Buffer.from(
+    ethers.utils.solidityKeccak256(
+      [ 'string', 'uint256' ],
+      [ 'redeem', tokenId ]
+    ).slice(2),
+    'hex'
+  )
+}
+
 describe('JustGems Tests', function () {
   before(async function() {
     const signers = await ethers.getSigners()
@@ -33,8 +43,8 @@ describe('JustGems Tests', function () {
     //in JustGemsSale, make admin CURATOR_ROLE, FUNDER_ROLE
     await admin.withSale.grantRole(getRole('CURATOR_ROLE'), admin.address)
     await admin.withSale.grantRole(getRole('FUNDER_ROLE'), admin.address)
-    //in JustGemsStore, make admin CONSUMER_ROLE
-    await admin.withStore.grantRole(getRole('CONSUMER_ROLE'), admin.address)
+    //in JustGemsStore, make admin STORE_ROLE
+    await admin.withStore.grantRole(getRole('STORE_ROLE'), admin.address)
     //in JustGemsIndex, make admin CURATOR_ROLE
     await admin.withIndex.grantRole(getRole('CURATOR_ROLE'), admin.address)
 
@@ -72,6 +82,11 @@ describe('JustGems Tests', function () {
     await admin.withSale['setPrice(address,uint256,uint256)'](usdc, 2, 200)
     expect(await admin.withSale['priceOf(address,uint256)'](usdc, 2)).to.equal(200)
     expect(await admin.withSale.minted(2)).to.equal(this.zero)
+
+    //set token 3 price to 300 wei
+    await admin.withSale['setPrice(uint256,uint256)'](3, 300)
+    expect(await admin.withSale['priceOf(uint256)'](3)).to.equal(300)
+    expect(await admin.withSale.minted(3)).to.equal(this.zero)
   })
 
   it('Should not mint', async function () {
@@ -254,5 +269,20 @@ describe('JustGems Tests', function () {
       )
       expect(results.length).to.equal(0)
     })()
+  })
+
+  it('Should redeem', async function () {
+    const { admin } = this.signers
+
+    const testnet = new ethers.Wallet(process.env.BLOCKCHAIN_MUMBAI_PRIVATE_KEY)
+
+    await admin.withSale['mint(uint256,address)'](3, testnet.address, {
+      value: 300
+    })
+
+    const proof = await testnet.signMessage(redeem(3))
+
+    await admin.withStore.redeem(3, proof)
+    expect(await admin.withStore.redeemed(3)).to.equal(testnet.address)
   })
 })

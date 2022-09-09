@@ -3,21 +3,25 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 import "./IERC721Burnable.sol";
 
-contract JustGemsStore is Context, AccessControl {
+contract JustGemsStore is AccessControl {
+  // ============ Errors ============
+
+  error InvalidCall();
+
   // ============ Constants ============
 
   IERC721Burnable immutable public COLLECTION;
 
-  bytes32 private constant _CONSUMER_ROLE = keccak256("CONSUMER_ROLE");
+  bytes32 private constant _STORE_ROLE = keccak256("STORE_ROLE");
 
   // ============ Storage ============
 
   //mapping of token id to owner burned
-  mapping(uint256 => address) private _consumed;
+  mapping(uint256 => address) private _redeemed;
 
   // ============ Deploy ============
 
@@ -31,8 +35,8 @@ contract JustGemsStore is Context, AccessControl {
   /**
    * @dev Returns who burned if any
    */
-  function consumed(uint256 tokenId) external view returns(address) {
-    return _consumed[tokenId];
+  function redeemed(uint256 tokenId) external view returns(address) {
+    return _redeemed[tokenId];
   }
 
   // ============ Admin Methods ============
@@ -40,9 +44,24 @@ contract JustGemsStore is Context, AccessControl {
   /**
    * @dev Allows CONSUMER_ROLE to burn `tokenId`
    */
-  function consume(uint256 tokenId) external onlyRole(_CONSUMER_ROLE) {
+  function redeem(
+    uint256 tokenId, 
+    bytes memory proof
+  ) external onlyRole(_STORE_ROLE) {
+    address owner = COLLECTION.ownerOf(tokenId);
+    //revert if the signer is not the owner of that token
+    if (COLLECTION.ownerOf(tokenId) != ECDSA.recover(
+      ECDSA.toEthSignedMessageHash(
+        keccak256(abi.encodePacked(
+          "redeem", 
+          tokenId
+        ))
+      ),
+      proof
+    )) revert InvalidCall();
+    //burn it. muhahahaha.
     COLLECTION.burn(tokenId);
-    _consumed[tokenId] = _msgSender();
+    //remember who redeemed it
+    _redeemed[tokenId] = owner;
   }
-
 }

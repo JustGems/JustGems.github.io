@@ -64,25 +64,6 @@
   margin-top: 20px;
 }
 
-.modal-qr .modal-head {
-  border-bottom: 1px solid #EFEFEF;
-  padding: 20px;
-}
-
-.modal-qr .modal-head h3 {
-  margin: 0;
-  line-height: 22px;
-}
-
-.modal-qr .modal-body {
-  padding: 20px;
-  text-align: center;
-}
-
-.modal-qr .modal-body img {
-  margin: auto;
-}
-
 @media(max-width: 767px) {
   .item {
     display: block;

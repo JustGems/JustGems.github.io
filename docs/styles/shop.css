@@ -41,3 +41,9 @@
   top: 2px;
   width: 20px;
 }
+
+@media(max-width: 767px) {
+  .results .item {
+    flex-basis: calc(50% - 22px);
+  }
+}

@@ -36,7 +36,7 @@ async function main() {
   console.log('-----------------------------------')
   console.log('JustGemsStore deployed to:', store.address)
   console.log('')
-  console.log('Roles: CONSUMER_ROLE')
+  console.log('Roles: STORE_ROLE')
   console.log('')
   console.log(
     'npx hardhat verify --show-stack-traces --network',
@@ -48,9 +48,9 @@ async function main() {
   console.log('')
   console.log('-----------------------------------')
   console.log('Next Steps:')
-  console.log('In JustGemsStore contract, grant CONSUMER_ROLE to admin (choose another wallet)')
+  console.log('In JustGemsStore contract, grant STORE_ROLE to admin (choose another wallet)')
   console.log(` - ${network.scanner}/address/${store.address}#writeContract`)
-  console.log(` - grantRole( ${getRole('CONSUMER_ROLE')}, ${admin.address} )`)
+  console.log(` - grantRole( ${getRole('STORE_ROLE')}, ${admin.address} )`)
   console.log('In JustGems contract, grant BURNER_ROLE to JustGemsStore')
   console.log(` - ${network.scanner}/address/${nft.address}#writeContract`)
   console.log(` - grantRole( ${getRole('BURNER_ROLE')}, ${store.address} )`)

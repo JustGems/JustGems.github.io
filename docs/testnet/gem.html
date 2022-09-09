@@ -30,6 +30,9 @@
     <link rel="stylesheet" type="text/css" href="/styles/gem.css?v1" />
   </head>
   <body>
+    <div id="preload">
+      <i class="fas fa-spinner fa-spin-pulse"></i>
+    </div>
     <header class="head">
       <div class="container">
         <nav class="left">
@@ -70,17 +73,65 @@
           <h3>{NAME}</h3>
           <p>{DESCRIPTION}</p>
           <div class="attributes"></div>
-          <div class="price{PRICE_HIDE}">{PRICE}</div>
-          <a 
-            class="btn btn-solid btn-large btn-primary" 
-            data-do="mint" 
-            data-on="click" 
-            href="javascript:void(0)"
-          >{ACTION}</a>
+          <div class="actions">
+            {ACTION}
+          </div>
+        </div>
+      </div>
+    </template>
+    <template id="template-action-mint">
+      <div class="action action-mint">
+        <div class="price">{PRICE}</div>
+        <a 
+          class="btn btn-solid btn-large btn-primary" 
+          data-do="mint" 
+          data-on="click" 
+          href="javascript:void(0)"
+        >
+          Mint Now
+        </a>
+      </div>
+    </template>
+    <template id="template-action-redeem">
+      <div class="action action-redeem">
+        <a 
+          class="btn btn-solid btn-large btn-primary" 
+          href="{OPENSEA_LINK}"
+          target="_blank"
+        >
+          View on OpenSea
+        </a>
+        <a 
+          class="btn btn-solid btn-large btn-secondary" 
+          data-do="redeem" 
+          data-on="click" 
+          href="javascript:void(0)"
+        >
+          Redeem
+        </a>
+      </div>
+    </template>
+    <template id="template-modal">
+      <div class="modal modal-qr">
+        <div class="overlay">
+          <a class="close" data-do="modal-close" data-on="click" href="javascript:void(0)">
+            <i class="fas fa-times"></i>
+          </a>
+          <header class="modal-head">
+            <h3>Redeem Gem</h3>
+          </header>
+          <div class="modal-body">
+            <p>
+              Please show this QR code to the store branch where this 
+              gem is located to complete the redeem process.
+            </p>
+            <div id="qr-redeem"></div>
+          </div>
         </div>
       </div>
     </template>
     <script id="network" data-value="testnet"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script type="text/javascript" src="/scripts/lib/doon.js"></script>
     <script type="text/javascript" src="/scripts/lib/theme.js"></script>
     <script type="text/javascript" src="/scripts/lib/web3.js"></script>

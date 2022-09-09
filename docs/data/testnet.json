@@ -21,7 +21,7 @@
           "address": "0x997AD53E22a1b1fC3E519dd6709D9701447B0E2A"
         },
         "store": {
-          "address": "0x72B3Dae98aBC8e3CcB4fa4AFE0A4cbb26bf93a31"
+          "address": "0xF3Ff0a21bB57B445f41B2242A9D1fCB66c491D2f"
         },
         "usdc": {
           "address": "0x8F54a342Fb4327C8D85Ea86A9322713eA80E040c",
@@ -2106,6 +2106,11 @@
         "type": "constructor"
       },
       {
+        "inputs": [],
+        "name": "InvalidCall",
+        "type": "error"
+      },
+      {
         "anonymous": false,
         "inputs": [
           {
@@ -2209,38 +2214,6 @@
       {
         "inputs": [
           {
-            "internalType": "uint256",
-            "name": "tokenId",
-            "type": "uint256"
-          }
-        ],
-        "name": "consume",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "tokenId",
-            "type": "uint256"
-          }
-        ],
-        "name": "consumed",
-        "outputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
             "internalType": "bytes32",
             "name": "role",
             "type": "bytes32"
@@ -2294,6 +2267,43 @@
             "internalType": "bool",
             "name": "",
             "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "tokenId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "proof",
+            "type": "bytes"
+          }
+        ],
+        "name": "redeem",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "tokenId",
+            "type": "uint256"
+          }
+        ],
+        "name": "redeemed",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
           }
         ],
         "stateMutability": "view",

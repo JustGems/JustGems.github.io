@@ -5,17 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <title>Shop Now | Just Gems</title>
+    <title>Store Redeem | Just Gems</title>
     <meta name="description" content="" />
-    <meta property="og:title" content="Just Gems" />
+    <meta property="og:title" content="Store Redeem | Just Gems" />
     <meta property="og:description" content="" />
     <meta property="og:image" content="https://www.justgems.io/images/banner.png" />
-    <meta property="og:url" content="https://www.justgems.io/shop" />
+    <meta property="og:url" content="https://www.justgems.io/gem" />
     <meta property="og:type" content="website" />
 
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@" />
-    <meta name="twitter:title" content="Just Gems" />
+    <meta name="twitter:title" content="Store Redeem | Just Gems" />
     <meta name="twitter:description" content="" />
     <meta name="twitter:image" content="https://www.justgems.io/images/banner.png" />
 
@@ -27,7 +27,7 @@
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
     <link rel="stylesheet" type="text/css" href="/styles/theme.css?v1" />
-    <link rel="stylesheet" type="text/css" href="/styles/shop.css?v1" />
+    <link rel="stylesheet" type="text/css" href="/styles/redeem.css?v1" />
   </head>
   <body>
     <div id="preload">
@@ -53,12 +53,17 @@
     <main class="body">
       <section class="section section-1">
         <div class="container">
-          <h1>Shop For Gems</h1>
           <div class="results"></div>
         </div>
       </section>
     </main>
     <footer class="foot"></footer>
+    <template id="template-attribute">
+      <div class="attribute">
+        <h6>{NAME}</h6>
+        <p>{VALUE}</p>
+      </div>
+    </template>
     <template id="template-item">
       <div class="item" data-do="detail" data-id="{ID}" data-on="click">
         <div class="preview">
@@ -66,7 +71,20 @@
         </div>
         <div class="info">
           <h3>{NAME}</h3>
-          <div class="price{PRICE_HIDE}">{PRICE}</div>
+          <p>{DESCRIPTION}</p>
+          <div class="attributes"></div>
+          <div class="actions">
+            <div class="action action-redeem">
+              <a 
+                class="btn btn-solid btn-large btn-primary" 
+                data-do="redeem" 
+                data-on="click" 
+                href="javascript:void(0)"
+              >
+                Complete Redeem
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </template>
@@ -79,7 +97,7 @@
     <script type="text/javascript" src="/scripts/lib/walletconnect.js"></script>
     <script type="text/javascript" src="/scripts/lib/fortmatic.js"></script>
     <script type="text/javascript" src="/scripts/lib/notify.js"></script>
-    <script type="text/javascript" src="/scripts/shop.js?v1"></script>
+    <script type="text/javascript" src="/scripts/redeem.js?v1"></script>
     <script type="text/javascript" src="/scripts/connect.js"></script>
   </body>
 </html>

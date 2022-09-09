@@ -4,27 +4,17 @@ window.addEventListener('web3sdk-ready', async _ => {
   
   const network = Web3SDK.network('polygon')
   const index = network.contract('index')
-  const sale = network.contract('sale')
-  const nft = network.contract('nft')
+  const store = network.contract('store')
   const usdc = network.contract('usdc')
+
+  const zero = '0x0000000000000000000000000000000000000000'
 
   const template = {
     item: document.getElementById('template-item').innerHTML,
-    attribute: document.getElementById('template-attribute').innerHTML,
-    mint: document.getElementById('template-action-mint').innerHTML,
-    redeem: document.getElementById('template-action-redeem').innerHTML,
-    modal: document.getElementById('template-modal').innerHTML
+    attribute: document.getElementById('template-attribute').innerHTML
   }
 
   const results = document.querySelector('div.results')
-
-  var formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    // These options are needed to round to whole numbers if that's what you want.
-    //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-    //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
-  });
 
   //------------------------------------------------------------------//
   // Functions 
@@ -124,47 +114,6 @@ window.addEventListener('web3sdk-ready', async _ => {
   //------------------------------------------------------------------//
   // Events
 
-  window.addEventListener('mint-click',  async _ => {
-    //check if logged in
-    if (!(await network.active())) {
-      return network.connectCB(Web3SDK.providers, (newstate, session) => {
-        //update state
-        Object.assign(Web3SDK.state, newstate, { connected: true })
-        //update loggedin state
-        window.localStorage.setItem('WEB3_LOGGED_IN', true)
-        window.dispatchEvent(new Event('mint-click'))
-      }, () => {})
-    }
-    const row = await detail(tokenId)
-    if (!row) {
-      return notify('error', `Token ${tokenId} not found.`)
-    } else if (row.minted) {
-      return notify('error', `Token ${tokenId} already minted.`)
-    }
-
-    //check balance
-    const balance = await usdc.read().balanceOf(Web3SDK.state.account)
-    if (row.price > balance) return notify('error', 'You dont have enough USDC')
-    const allowance = await usdc.read().allowance(Web3SDK.state.account, sale.address)
-    if (allowance == 0) {
-      return write(usdc, 'approve', [sale.address, row.price], () => {
-        window.dispatchEvent(new Event('mint-click'))
-      }, e => {
-        return notify('error', e)
-      })
-    }
-
-    return write(sale, 'mint(address,uint256,address)', [
-      usdc.address, 
-      tokenId,
-      Web3SDK.state.account
-    ], () => {
-      window.location.reload()
-    }, e => {
-      return notify('error', e)
-    })
-  })
-
   window.addEventListener('redeem-click',  async _ => {
     //check if logged in
     if (!(await network.active())) {
@@ -182,53 +131,22 @@ window.addEventListener('web3sdk-ready', async _ => {
       return notify('error', `Token ${tokenId} not found.`)
     }
 
-    let owner
-    try {
-      owner = await nft.read().ownerOf(tokenId)
-    } catch(e) {
-      return notify('error', `Could not retrieve token ${tokenId} owner.`)
-    }
-    //check owner
-    if (owner.toLowerCase() !== Web3SDK.state.account.toLowerCase()) {
-      return notify('error', `You are not the owner of token ${tokenId}.`)
-    }
-
-    const web3 = Web3SDK.web3()
-    //make a message
-    const message = web3.utils.sha3([
-      web3.utils.toHex('redeem'),
-      tokenId.toString(16).padStart(64, '0')
-    ].join(''), { encoding: 'hex' }).slice(2);
-    //sign a message
-    const signed = await ethereum.request({ 
-      method: 'personal_sign', 
-      params: [ message, Web3SDK.state.account ] 
-    });
-    //make a url
-    const url = `${window.location.origin}/redeem.html?token=${tokenId}&proof=${signed}`
-    //make a QR code
-    const modal = theme.toElement(template.modal)
-    document.body.appendChild(modal)
-    window.doon(modal)
-
-    new QRCode(document.getElementById('qr-redeem'), {
-      text: url,
-      width: 250,
-      height: 250,
-      colorDark : "#000000",
-      colorLight : "#FFFFFF",
-      correctLevel : QRCode.CorrectLevel.H
-    });
-  })
-
-  window.addEventListener('modal-close-click', () => {
-    document.body.removeChild(document.querySelector('div.modal'))
+    return write(store, 'redeem', [
+      tokenId,
+      proof
+    ], () => {
+      notify('success', `Token ${tokenId} is now redeemed`)
+      window.location.reload()
+    }, e => {
+      return notify('error', e)
+    })
   })
 
   //------------------------------------------------------------------//
   // Initialize
-  const tokenId = parseInt(urlparams('token'))
-  if (!tokenId) return (window.location.href = './shop.html')
+  const { token, proof } = urlparams()
+  if (!token) return (window.location.href = './shop.html')
+  const tokenId = parseInt(token)
   //initialize asyncronously
   ;(async _ => {
     const row = await detail(tokenId)
@@ -237,26 +155,21 @@ window.addEventListener('web3sdk-ready', async _ => {
     }
 
     results.innerHTML = ''
-
-    let action = row.minted 
-      ? template.redeem.replace('{OPENSEA_LINK}', `${network.config.chain_marketplace}/${nft.address}/${tokenId}`)
-      : template.mint.replace('{PRICE}', formatter.format(row.price / 1000000).substring(1))
-
-    try {
-      await nft.read().ownerOf(tokenId)
-    } catch(e) {
-      if (row.minted) {
-        action = '<div class="alert alert-outline alert-info">This gem no longer exists.</div>'
-      }
-    }
     
     const item = theme.toElement(template.item, {
       '{ID}': row.id,
       '{IMAGE}': row.image,
       '{NAME}': row.name,
-      '{DESCRIPTION}': row.description,
-      '{ACTION}': action
+      '{DESCRIPTION}': row.description
     })
+
+    if (!row.minted) {
+      item.querySelector('div.action-redeem').innerHTML 
+        = '<div class="alert alert-solid alert-error">Not Minted Yet</div>'
+    } else if ((await store.read().redeemed(tokenId)) !== zero) {
+      item.querySelector('div.action-redeem').innerHTML 
+        = '<div class="alert alert-solid alert-error">Already Redeemed</div>'
+    }
 
     results.appendChild(item)
 
