@@ -304,7 +304,7 @@ window.addEventListener('web3sdk-ready', async _ => {
 
   window.addEventListener('set-price-click', async _ => {
     const token = usdc.address
-    const price = document.getElementById('field-price').value * 1000000
+    const price = Math.floor(document.getElementById('field-price').value * 1000000)
 
     await write(sale, 'setPrice(address,uint256,uint256)', [
       token,
