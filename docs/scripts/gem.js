@@ -144,7 +144,7 @@ window.addEventListener('web3sdk-ready', async _ => {
 
     //check balance
     const balance = await usdc.read().balanceOf(Web3SDK.state.account)
-    if (row.price > balance) return notify('error', 'You dont have enough USDC')
+    if ((row.price - balance) > 0) return notify('error', 'You dont have enough USDC')
     const allowance = await usdc.read().allowance(Web3SDK.state.account, sale.address)
     if (allowance == 0) {
       return write(usdc, 'approve', [sale.address, row.price], () => {
