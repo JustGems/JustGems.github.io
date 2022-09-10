@@ -11,7 +11,7 @@
   border: 1px solid #EFEFEF;
   cursor: pointer;
   flex-basis: calc(33.33% - 22px);
-  margin: 0 20px 0 0;
+  margin: 10px 20px 10px 0;
 }
 
 .results .item .preview img {
