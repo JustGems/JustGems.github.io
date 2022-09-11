@@ -236,7 +236,7 @@ window.addEventListener('web3sdk-ready', async _ => {
       name: document.getElementById('field-name').value,
       description: document.getElementById('field-description').value,
       image: document.getElementById('field-image-uri').value,
-      external_url: `https://www.justgems.io/gem.html?token=${Web3SDK.state.tokenId}`
+      external_url: `https://www.justgemsnft.com/gem.html?token=${Web3SDK.state.tokenId}`
     }
     Array.from(document.querySelectorAll('div.field-attribute div.field-row')).forEach(row => {
       const name = row.querySelector('input.name').value
