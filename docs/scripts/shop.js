@@ -70,7 +70,7 @@ window.addEventListener('web3sdk-ready', async _ => {
   ;(async _ => {
     results.innerHTML = ''
 
-    search([], [], row => {
+    const rows = await search([], [], row => {
       const item = theme.toElement(template.item, {
         '{ID}': row.id,
         '{IMAGE}': row.image,
@@ -83,5 +83,11 @@ window.addEventListener('web3sdk-ready', async _ => {
       window.doon(item)
       theme.hide('#preload', true)
     })
+
+    //if no rows
+    if (!rows.length) {
+      results.innerHTML = '<div class="alert alert-solid alert-info">No Gems Found.</div>'
+      theme.hide('#preload', true)
+    }
   })();
 })

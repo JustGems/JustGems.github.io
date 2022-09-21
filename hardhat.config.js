@@ -56,11 +56,12 @@ module.exports = {
       accounts: [process.env.BLOCKCHAIN_POLYGON_PRIVATE_KEY],
       contracts: {
         usdc: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-        nft: '',
-        metadata: '',
-        sale: '',
-        index: '',
-        store: ''
+        nft: '0xdE2269159b74E49b3C14E16BE59F49C404Bb642F',
+        metadata: '0xc7F0c5fE8E013C1E0d9137814EE9C8fE11A831Dc',
+        sale: '0x3578888c7bC7D10deFC550400dadB0E1B406A522',
+        index: '0xA39eaD14E85E706ac63B2DB1f7a46e0036530cA6',
+        store: '0x8d67b4CEA2756FCb9B7b64513762065B89281707',
+        splitter: '0x7C1B2d95fe7dcD00cf8e6248ee6093B38C5e6B70'
       }
     }
   },

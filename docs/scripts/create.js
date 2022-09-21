@@ -84,6 +84,19 @@ window.addEventListener('web3sdk-ready', async _ => {
   // Events
 
   window.addEventListener('web3sdk-connected', async _ => {
+    //check for role
+    let hasRole = await metadata.read().hasRole(
+      '0x850d585eb7f024ccee5e68e55f2c26cc72e1e6ee456acf62135757a5eb9d4a10',
+      Web3SDK.state.account
+    ) && await sale.read().hasRole(
+      '0x850d585eb7f024ccee5e68e55f2c26cc72e1e6ee456acf62135757a5eb9d4a10',
+      Web3SDK.state.account
+    )
+
+    if (!hasRole) {
+      document.querySelector('main.body div.connected').innerHTML = ''
+      return notify('error', 'Wallet cannot create gem')
+    }
     Web3SDK.state.nextTokenId = parseInt(await metadata.read().lastTokenId()) + 1
   })
 

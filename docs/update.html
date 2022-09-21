@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>Update Item | Just Gems</title>
+    <meta property="og:title" content="Update Item | Just Gems" />
+    <meta property="og:image" content="https://www.justgemsnft.com/images/banner.png" />
+    <meta property="og:url" content="https://www.justgemsnft.com/admin/update" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@JustGemsNFT" />
+    <meta name="twitter:title" content="Update Item | Just Gems" />
+    <meta name="twitter:image" content="https://www.justgemsnft.com/images/banner.png" />
+
+    <link rel="shortcut icon" href="/favicon.png" type="image/png" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+
+    <link rel="stylesheet" type="text/css" href="/fonts/playfair/font.css" /> 
+    <link rel="stylesheet" type="text/css" href="/fonts/poppins/font.css" />
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="/styles/theme.css?v1" />
+    <link rel="stylesheet" type="text/css" href="/styles/update.css?v1" />
+  </head>
+  <body>
+    <header class="head">
+      <div class="container">
+        <nav class="left">
+          <a class="logo" href="./index.html">
+            <img src="/images/logo/logo-justgems-9.png" />
+          </a>
+        </nav>
+        <nav class="right">
+          <a class="link" href="./howto.html">How To</a>
+          <a class="link" href="./faq.html">FAQ</a>
+          <a class="link btn btn-outline btn-primary" href="./shop.html">Shop Now</a>
+          <div class="social">
+            <a class="link" href="https://twitter.com/JustGemsNFT" target="_blank">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a class="link" href="https://opensea.io/collection/just-gems" target="_blank">
+              <img src="/images/social-opensea-icon.svg" />
+            </a>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <main class="body">
+      <div class="disconnected">
+        <div class="container">
+          <a 
+            class="btn btn-solid btn-large btn-primary btn-create" 
+            data-do="connect"
+            data-on="click"
+            href="javascript:void(0)"
+          >
+            Connect to Polygon
+          </a>
+        </div>
+      </div>
+      <div class="connected hide">
+        <div class="container">
+          <h1>Update Item</h1>
+          <section class="section section-1">
+            <h2>Step 1: Upload New Image</h2>
+            <div class="form">
+              <div class="form-row">
+                <div class="form-field">
+                  <input id="field-image" class="form-control" type="file" accept="image/*" />
+                </div>
+              </div>
+              <div class="form-row">
+                <button class="btn btn-solid btn-large btn-primary" data-do="upload-image" data-on="click">
+                  Upload Image
+                </button>
+                <a class="skip" data-do="skip" data-on="click" data-step="2" href="javascript:void(0)">
+                  Skip
+                </a>
+              </div>
+            </div>
+          </section>
+          <section class="section section-2 hide">
+            <h2>Step 2: Update Metadata</h2>
+            <div class="form">
+              <div class="form-row">
+                <label>Name</label>
+                <div class="form-field">
+                  <input id="field-name" class="form-control" type="text" />
+                </div>
+              </div>
+              <div class="form-row">
+                <label>Description</label>
+                <div class="form-field">
+                  <input id="field-description" class="form-control" type="text" />
+                </div>
+              </div>
+              <div class="form-row">
+                <label>Image</label>
+                <div class="form-field">
+                  <input 
+                    id="field-image-uri" 
+                    class="form-control" 
+                    type="text" 
+                    data-do="update-image"
+                    data-on="keyup"
+                  />
+                </div>
+              </div>
+              <div class="form-row">
+                <label>Attributes</label>
+                <div 
+                  class="form-field field-attribute" 
+                  data-do="field-attribute"
+                >
+                  <a 
+                    class="btn btn-outline btn-secondary add"
+                    href="javascript:void(0)"
+                  >
+                    Add Attribute
+                  </a>
+                </div>
+              </div>
+              <div class="form-row">
+                <button class="btn btn-solid btn-large btn-primary" data-do="upload-metadata" data-on="click">
+                  Upload Metadata
+                </button>
+                <a class="skip" data-do="skip" data-on="click" data-step="1" href="javascript:void(0)">
+                  Back
+                </a>
+                <a class="skip" data-do="skip" data-on="click" data-step="3" href="javascript:void(0)">
+                  Skip
+                </a>
+              </div>
+            </div>
+          </section>
+          <section class="section section-3 hide">
+            <h2>Step 3: Write to Blockchain</h2>
+            <div class="form">
+              <div class="form-row">
+                <label>URI</label>
+                <div class="form-field">
+                  <input id="field-uri" class="form-control" type="text" />
+                </div>
+              </div>
+              <div class="form-row">
+                <button class="btn btn-solid btn-large btn-primary" data-do="set-metadata" data-on="click">
+                  Update Metadata
+                </button>
+                <a class="skip" data-do="skip" data-on="click" data-step="2" href="javascript:void(0)">
+                  Back
+                </a>
+              </div>
+              <div class="form-row">
+                <label>USDC Price</label>
+                <div class="form-field">
+                  <input id="field-price" class="form-control" type="number" min="0" step="0.000001" />
+                </div>
+              </div>
+              <div class="form-row">
+                <button class="btn btn-solid btn-large btn-primary" data-do="set-price" data-on="click">
+                  Update Price
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+    <footer class="foot">
+      <div class="container">
+        <div class="left">
+          <img src="/images/logo/logo-justgems-2.png" />
+        </div>
+        <nav>
+          <a href="./index.html">Home</a>
+          <a href="./shop.html">Shop Now</a>
+          <a href="./faq.html">Frequent Questions</a>
+          <a href="./howto.html">How To</a>
+        </nav>
+        <nav>
+          <a href="https://twitter.com/JustGemsNFT" target="_blank">Twitter</a>
+          <a href="https://opensea.io/collection/just-gems" target="_blank">OpenSea</a>
+          <a href="https://opensea.io/collection/just-gems" target="_blank">LooksRare</a>
+          <a href="https://opensea.io/collection/just-gems" target="_blank">X2Y2</a>
+        </nav>
+        <nav>
+          <a href="./terms.html">Terms of Use</a>
+          <a href="./privacy.html">Privacy Policy</a>
+        </nav>
+      </div>
+    </footer>
+    <script id="network" data-value="mainnet"></script>
+    <script type="text/javascript" src="/scripts/lib/doon.js"></script>
+    <script type="text/javascript" src="/scripts/lib/theme.js"></script>
+    <script type="text/javascript" src="/scripts/lib/web3.js"></script>
+    <script type="text/javascript" src="/scripts/lib/web3modal.js"></script>
+    <script type="text/javascript" src="/scripts/lib/web3sdk.js"></script>
+    <script type="text/javascript" src="/scripts/lib/walletconnect.js"></script>
+    <script type="text/javascript" src="/scripts/lib/fortmatic.js"></script>
+    <script type="text/javascript" src="/scripts/lib/notify.js"></script>
+    <script type="text/javascript" src="/scripts/update.js?v1"></script>
+    <script type="text/javascript" src="/scripts/connect.js"></script>
+  </body>
+</html>

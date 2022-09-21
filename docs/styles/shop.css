@@ -7,6 +7,10 @@
   flex-wrap: wrap;
 }
 
+.results .alert {
+  flex-grow: 1;
+}
+
 .results .item {
   border: 1px solid #EFEFEF;
   cursor: pointer;
