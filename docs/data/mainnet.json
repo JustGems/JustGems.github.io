@@ -5,7 +5,7 @@
       "chain_symbol": "MATIC",
       "chain_name": "Polygon Mainnet",
       "chain_uri": "https://polygon-rpc.com",
-      "chain_marketplace": "https://opensea.io/assets",
+      "chain_marketplace": "https://opensea.io/assets/matic",
       "chain_scanner": "https://polygonscan.com/",
       "contracts": {
         "nft": {
