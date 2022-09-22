@@ -24,7 +24,7 @@
           "address": "0x8d67b4CEA2756FCb9B7b64513762065B89281707"
         },
         "usdc": {
-          "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+          "address": "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
           "type": "ERC20", 
           "symbol": "USDC", 
           "decimals": 18, 
