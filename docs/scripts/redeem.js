@@ -125,6 +125,16 @@ window.addEventListener('web3sdk-ready', async _ => {
         window.dispatchEvent(new Event('redeem-click'))
       }, () => {})
     }
+
+    //check if has role
+    const hasRole = store.read().hasRole(
+      '0x9cf888df9829983a4501c3e5076732bbf523e06c6b31f6ce065f61c2aec20567',
+      Web3SDK.state.account
+    )
+
+    if (!hasRole) {
+      return notify('error', `${Web3SDK.state.account} does not have store role.`)
+    }
   
     const row = await detail(tokenId)
     if (!row) {
@@ -138,7 +148,7 @@ window.addEventListener('web3sdk-ready', async _ => {
       notify('success', `Token ${tokenId} is now redeemed`)
       window.location.reload()
     }, e => {
-      return notify('error', e)
+      return notify('error', e.message || e)
     })
   })
 

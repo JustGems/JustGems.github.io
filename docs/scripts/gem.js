@@ -9,11 +9,15 @@ window.addEventListener('web3sdk-ready', async _ => {
   const usdc = network.contract('usdc')
 
   const template = {
-    item: document.getElementById('template-item').innerHTML,
+    mint: document.getElementById('template-item-mint').innerHTML,
+    minted: document.getElementById('template-item-minted').innerHTML,
+    burned: document.getElementById('template-item-burned').innerHTML,
+    redeem: document.getElementById('template-item-redeem').innerHTML,
     attribute: document.getElementById('template-attribute').innerHTML,
-    mint: document.getElementById('template-action-mint').innerHTML,
-    redeem: document.getElementById('template-action-redeem').innerHTML,
-    modal: document.getElementById('template-modal').innerHTML
+    modal: {
+      redeem: document.getElementById('template-modal-redeem').innerHTML,
+      transfer: document.getElementById('template-modal-transfer').innerHTML
+    }
   }
 
   const results = document.querySelector('div.results')
@@ -107,12 +111,18 @@ window.addEventListener('web3sdk-ready', async _ => {
       return null
     }
 
+    let owner = null
+    try {
+      owner = await nft.read().ownerOf(tokenId)
+    } catch(e) {}
+
     const response = await fetch(token.uri)
     const json = await response.json()
 
     return {
       id: tokenId,
       name: json.name,
+      owner: owner,
       description: json.description,
       attributes: json.attributes,
       image: json.image,
@@ -142,6 +152,8 @@ window.addEventListener('web3sdk-ready', async _ => {
       return notify('error', `Token ${tokenId} already minted.`)
     }
 
+    notify('info', `Minting ${tokenId}. Please wait...`)
+
     //check balance
     const balance = await usdc.read().balanceOf(Web3SDK.state.account)
     if ((row.price - balance) > 0) return notify('error', 'You dont have enough USDC')
@@ -150,7 +162,7 @@ window.addEventListener('web3sdk-ready', async _ => {
       return write(usdc, 'approve', [sale.address, row.price], () => {
         window.dispatchEvent(new Event('mint-click'))
       }, e => {
-        return notify('error', e)
+        return notify('error', e.message || e)
       })
     }
 
@@ -161,7 +173,7 @@ window.addEventListener('web3sdk-ready', async _ => {
     ], () => {
       window.location.reload()
     }, e => {
-      return notify('error', e)
+      return notify('error', e.message || e)
     })
   })
 
@@ -200,14 +212,19 @@ window.addEventListener('web3sdk-ready', async _ => {
       tokenId.toString(16).padStart(64, '0')
     ].join(''), { encoding: 'hex' }).slice(2);
     //sign a message
-    const signed = await ethereum.request({ 
-      method: 'personal_sign', 
-      params: [ message, Web3SDK.state.account ] 
-    });
+    let signed
+    try {
+      signed = await ethereum.request({ 
+        method: 'personal_sign', 
+        params: [ message, Web3SDK.state.account ] 
+      });
+    } catch(e) {
+      return notify('error', e.message || e)
+    }
     //make a url
     const url = `${window.location.origin}/redeem.html?token=${tokenId}&proof=${signed}`
     //make a QR code
-    const modal = theme.toElement(template.modal)
+    const modal = theme.toElement(template.modal.redeem)
     document.body.appendChild(modal)
     window.doon(modal)
 
@@ -219,6 +236,84 @@ window.addEventListener('web3sdk-ready', async _ => {
       colorLight : "#FFFFFF",
       correctLevel : QRCode.CorrectLevel.H
     });
+  })
+
+  window.addEventListener('transfer-modal-click',  async _ => {
+    //check if logged in
+    if (!(await network.active())) {
+      return network.connectCB(Web3SDK.providers, (newstate, session) => {
+        //update state
+        Object.assign(Web3SDK.state, newstate, { connected: true })
+        //update loggedin state
+        window.localStorage.setItem('WEB3_LOGGED_IN', true)
+        window.dispatchEvent(new Event('redeem-click'))
+      }, () => {})
+    }
+  
+    const row = await detail(tokenId)
+    if (!row) {
+      return notify('error', `Token ${tokenId} not found.`)
+    }
+
+    let owner
+    try {
+      owner = await nft.read().ownerOf(tokenId)
+    } catch(e) {
+      return notify('error', `Could not retrieve token ${tokenId} owner.`)
+    }
+    //check owner
+    if (Web3SDK.state?.account && owner.toLowerCase() !== Web3SDK.state.account.toLowerCase()) {
+      return notify('error', `You are not the owner of token ${tokenId}.`)
+    }
+
+    const modal = theme.toElement(template.modal.transfer)
+    document.body.appendChild(modal)
+    window.doon(modal)
+  })
+
+  window.addEventListener('transfer-click',  async _ => {
+    //check if logged in
+    if (!(await network.active())) {
+      return network.connectCB(Web3SDK.providers, (newstate, session) => {
+        //update state
+        Object.assign(Web3SDK.state, newstate, { connected: true })
+        //update loggedin state
+        window.localStorage.setItem('WEB3_LOGGED_IN', true)
+        window.dispatchEvent(new Event('redeem-click'))
+      }, () => {})
+    }
+  
+    const row = await detail(tokenId)
+    if (!row) {
+      return notify('error', `Token ${tokenId} not found.`)
+    }
+
+    let owner
+    try {
+      owner = await nft.read().ownerOf(tokenId)
+    } catch(e) {
+      return notify('error', `Could not retrieve token ${tokenId} owner.`)
+    }
+    //check owner
+    if (Web3SDK.state?.account && owner.toLowerCase() !== Web3SDK.state.account.toLowerCase()) {
+      return notify('error', `You are not the owner of token ${tokenId}.`)
+    }
+
+    const walletAddress = document.getElementById('transfer-wallet').value
+
+    if (!walletAddress?.length) {
+      return notify('error', 'Invalid wallet address')
+    }
+
+    return write(nft, 'safeTransferFrom', [
+      Web3SDK.state.account, 
+      walletAddress,
+      tokenId,
+    ], () => {
+      window.location.reload()
+    }, e => {
+      return notify('error', e.message || e)
+    })
   })
 
   window.addEventListener('modal-close-click', () => {
@@ -238,24 +333,30 @@ window.addEventListener('web3sdk-ready', async _ => {
 
     results.innerHTML = ''
 
-    let action = row.minted 
-      ? template.redeem.replace('{OPENSEA_LINK}', `${network.config.chain_marketplace}/${nft.address}/${tokenId}`)
-      : template.mint.replace('{PRICE}', formatter.format(row.price / 1000000).substring(1))
-
-    try {
-      await nft.read().ownerOf(tokenId)
-    } catch(e) {
-      if (row.minted) {
-        action = '<div class="alert alert-outline alert-info">This gem no longer exists.</div>'
-      }
+    let itemTemplate
+    if (!row.minted) {
+      itemTemplate = template.mint
+        .replace('{PRICE}', formatter.format(row.price / 1000000).substring(1))
+    } else if (!row.owner) {
+      itemTemplate = template.burned
+    } else if (Web3SDK.state?.account && row.owner.toLowerCase() === Web3SDK.state.account.toLowerCase()) {
+      itemTemplate = template.redeem
+        .replace('{OPENSEA_OWNER_LINK}', `https://opensea.io/${row.owner}`)
+        .replace('{OPENSEA_ITEM_LINK}', `${network.config.chain_marketplace}/${nft.address}/${tokenId}`)
+    } else {
+      itemTemplate = template.minted
+        .replace('{OWNER}', `${row.owner.substring(0, 4)}...${
+          row.owner.substring(row.owner.length - 4)
+        }`)
+        .replace('{OPENSEA_OWNER_LINK}', `https://opensea.io/${row.owner}`)
+        .replace('{OPENSEA_ITEM_LINK}', `${network.config.chain_marketplace}/${nft.address}/${tokenId}`)
     }
     
-    const item = theme.toElement(template.item, {
+    const item = theme.toElement(itemTemplate, {
       '{ID}': row.id,
       '{IMAGE}': row.image,
       '{NAME}': row.name,
-      '{DESCRIPTION}': row.description,
-      '{ACTION}': action
+      '{DESCRIPTION}': row.description
     })
 
     results.appendChild(item)

@@ -19,8 +19,15 @@
 }
 
 .item .info h3 {
-  line-height: 30px;
+  font-size: 30px;
+  line-height: 36px;
   margin: 0;
+}
+
+.item .info em {
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
 }
 
 .item .info .price {
@@ -41,12 +48,21 @@
   width: 20px;
 }
 
+.item .info .actions {
+  margin-top: 20px;
+}
+
+.item .info .actions .cta {
+  display: inline-block;
+  margin: 0 10px;
+}
+
 .item .info .attribute {
   display: flex;
 }
 
 .item .info .attribute h6 {
-  flex-basis: 25%;
+  flex-basis: 35%;
   font-size: 14px;
   font-weight: bold;
   line-height: 40px;
@@ -54,7 +70,7 @@
 }
 
 .item .info .attribute p {
-  flex-basis: 75%;
+  flex-basis: 65%;
   font-size: 14px;
   line-height: 40px;
   padding: 0;
@@ -64,23 +80,60 @@
   margin-top: 20px;
 }
 
-.modal-qr .modal-head {
+.modal {
+  display: block;
+}
+
+.modal-redeem .modal-head {
   border-bottom: 1px solid #EFEFEF;
   padding: 20px;
 }
 
-.modal-qr .modal-head h3 {
+.modal-redeem .modal-head h3 {
   margin: 0;
   line-height: 22px;
 }
 
-.modal-qr .modal-body {
+.modal-redeem .modal-body {
   padding: 20px;
   text-align: center;
 }
 
-.modal-qr .modal-body img {
+.modal-redeem .modal-body img {
   margin: auto;
+}
+
+.modal-transfer .overlay {
+  max-width: 400px;
+}
+
+.modal-transfer .modal-head {
+  border-bottom: 1px solid #EFEFEF;
+  padding: 20px;
+}
+
+.modal-transfer .modal-head h3 {
+  margin: 0;
+  line-height: 22px;
+}
+
+.modal-transfer .modal-body {
+  padding: 20px;
+  text-align: center;
+}
+
+.modal-transfer .modal-body img {
+  margin: auto;
+}
+
+.modal-transfer .modal-body label {
+  display: block;
+  text-align: left;
+}
+
+.modal-transfer .modal-body .btn {
+  display: block;
+  margin-top: 10px;
 }
 
 @media(max-width: 767px) {
@@ -92,5 +145,13 @@
     display: block;
     margin-top: 20px;
     text-align: center;
+  }
+
+  .item .info .actions {
+    text-align: center;
+  }
+
+  .item .info .actions .cta {
+    margin-top: 10px;
   }
 }

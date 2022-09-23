@@ -373,6 +373,10 @@ a, a:hover, a:active, a:visited {
   margin-right: 20px;
 }
 
+.head .right .link.btn {
+  margin-right: 10px;
+}
+
 .head .right .social {
   align-items: center;
   display: flex;
@@ -452,6 +456,7 @@ a, a:hover, a:active, a:visited {
 
   .head .left {
     text-align: center;
+    margin-bottom: 10px;
   }
 
   .head .right {
@@ -461,6 +466,12 @@ a, a:hover, a:active, a:visited {
 
   .head .right .link {
     margin: 5px;
+  }
+
+  .head .right .link.btn {
+    display: block;
+    margin: 10px auto 0;
+    max-width: 300px;
   }
 
   .head .right .social {

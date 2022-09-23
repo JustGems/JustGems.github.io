@@ -44,11 +44,32 @@
           <a class="link" href="./howto.html">How To</a>
           <a class="link" href="./faq.html">FAQ</a>
           <a class="link btn btn-outline btn-primary" href="./shop.html">Shop Now</a>
+          <div class="disconnected">
+            <a 
+              class="link btn btn-outline btn-secondary" 
+              data-do="connect"
+              data-on="click"
+              href="javascript:void(0)"
+            >
+              Connect to Polygon
+            </a>
+          </div>
+          <div class="connected hide">
+            <a 
+              class="link btn btn-outline btn-secondary" 
+              data-do="disconnect"
+              data-on="click"
+              href="javascript:void(0)"
+            >
+              <span class="btn-address"></span>
+              <i class="fas fa-right-from-bracket"></i>
+            </a>
+          </div>
           <div class="social">
             <a class="link" href="https://twitter.com/JustGemsNFT" target="_blank">
               <i class="fab fa-twitter"></i>
             </a>
-            <a class="link" href="https://opensea.io/collection/just-gems" target="_blank">
+            <a class="link" href="https://opensea.io/collection/just-gems-nft" target="_blank">
               <img src="/images/social-opensea-icon.svg" />
             </a>
           </div>
@@ -75,11 +96,7 @@
         </nav>
         <nav>
           <a href="https://twitter.com/JustGemsNFT" target="_blank">Twitter</a>
-          <a href="https://opensea.io/collection/just-gems" target="_blank">OpenSea</a>
-          <a href="https://opensea.io/collection/just-gems" target="_blank">LooksRare</a>
-          <a href="https://opensea.io/collection/just-gems" target="_blank">X2Y2</a>
-        </nav>
-        <nav>
+          <a href="https://opensea.io/collection/just-gems-nft" target="_blank">OpenSea</a>
           <a href="./terms.html">Terms of Use</a>
           <a href="./privacy.html">Privacy Policy</a>
         </nav>
@@ -91,7 +108,7 @@
         <p>{VALUE}</p>
       </div>
     </template>
-    <template id="template-item">
+    <template id="template-item-mint">
       <div class="item" data-do="detail" data-id="{ID}" data-on="click">
         <div class="preview">
           <img src="{IMAGE}" loading="lazy" />
@@ -101,45 +118,98 @@
           <p>{DESCRIPTION}</p>
           <div class="attributes"></div>
           <div class="actions">
-            {ACTION}
+            <div class="action action-mint">
+              <div class="price">{PRICE}</div>
+              <a 
+                class="btn btn-solid btn-large btn-primary" 
+                data-do="mint" 
+                data-on="click" 
+                href="javascript:void(0)"
+              >
+                Mint Now
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </template>
-    <template id="template-action-mint">
-      <div class="action action-mint">
-        <div class="price">{PRICE}</div>
-        <a 
-          class="btn btn-solid btn-large btn-primary" 
-          data-do="mint" 
-          data-on="click" 
-          href="javascript:void(0)"
-        >
-          Mint Now
-        </a>
+    <template id="template-item-minted">
+      <div class="item" data-do="detail" data-id="{ID}" data-on="click">
+        <div class="preview">
+          <img src="{IMAGE}" loading="lazy" />
+        </div>
+        <div class="info">
+          <h3>{NAME}</h3>
+          <em>Owned by <a href="{OPENSEA_OWNER_LINK}" target="_blank">{OWNER}</a></em>
+          <p>{DESCRIPTION}</p>
+          <div class="attributes"></div>
+          <div class="actions">
+            <div class="action action-redeem">
+              <a 
+                class="btn btn-solid btn-large btn-primary" 
+                href="{OPENSEA_ITEM_LINK}"
+                target="_blank"
+              >
+                View on OpenSea
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </template>
-    <template id="template-action-redeem">
-      <div class="action action-redeem">
-        <a 
-          class="btn btn-solid btn-large btn-primary" 
-          href="{OPENSEA_LINK}"
-          target="_blank"
-        >
-          View on OpenSea
-        </a>
-        <a 
-          class="btn btn-solid btn-large btn-secondary" 
-          data-do="redeem" 
-          data-on="click" 
-          href="javascript:void(0)"
-        >
-          Redeem
-        </a>
+    <template id="template-item-burned">
+      <div class="item" data-do="detail" data-id="{ID}" data-on="click">
+        <div class="preview">
+          <img src="{IMAGE}" loading="lazy" />
+        </div>
+        <div class="info">
+          <h3>{NAME}</h3>
+          <p>{DESCRIPTION}</p>
+          <div class="attributes"></div>
+          <div class="actions">
+            <div class="alert alert-outline alert-info">This gem no longer exists.</div>
+          </div>
+        </div>
       </div>
     </template>
-    <template id="template-modal">
-      <div class="modal modal-qr">
+    <template id="template-item-redeem">
+      <div class="item" data-do="detail" data-id="{ID}" data-on="click">
+        <div class="preview">
+          <img src="{IMAGE}" loading="lazy" />
+        </div>
+        <div class="info">
+          <h3>{NAME}</h3>
+          <em>Owned by <a href="{OPENSEA_OWNER_LINK}" target="_blank">You</a></em>
+          <p>{DESCRIPTION}</p>
+          <div class="attributes"></div>
+          <div class="actions">
+            <div class="action action-redeem">
+              <a 
+                class="btn btn-solid btn-large btn-primary" 
+                href="{OPENSEA_ITEM_LINK}"
+                target="_blank"
+              >
+                View on OpenSea
+              </a>
+              <a 
+                class="cta text-primary" 
+                data-do="redeem" 
+                data-on="click" 
+                href="javascript:void(0)"
+              >Redeem</a>
+              <a 
+                class="cta text-secondary" 
+                data-do="transfer-modal" 
+                data-on="click" 
+                href="javascript:void(0)"
+              >Transfer</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <template id="template-modal-redeem">
+      <div class="modal modal-redeem">
         <div class="overlay">
           <a class="close" data-do="modal-close" data-on="click" href="javascript:void(0)">
             <i class="fas fa-times"></i>
@@ -153,6 +223,32 @@
               gem is located to complete the redeem process.
             </p>
             <div id="qr-redeem"></div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <template id="template-modal-transfer">
+      <div class="modal modal-transfer">
+        <div class="overlay">
+          <a class="close" data-do="modal-close" data-on="click" href="javascript:void(0)">
+            <i class="fas fa-times"></i>
+          </a>
+          <header class="modal-head">
+            <h3>Transfer Gem</h3>
+          </header>
+          <div class="modal-body">
+            <div class="form-row">
+              <label>Transfer Gem to Wallet Address</label>
+              <input class="form-control" type="text" id="transfer-wallet" placeholder="eg. 0x1ed3..." />
+            </div>
+            <a 
+              class="btn btn-block btn-solid btn-primary" 
+              data-do="transfer"
+              data-on="click"
+              href="javascript:void(0)"
+            >
+              Transfer
+            </a>
           </div>
         </div>
       </div>

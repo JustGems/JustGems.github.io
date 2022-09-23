@@ -79,12 +79,18 @@
   // Events
 
   window.addEventListener('connect-click', _ => {
-    network.connectCB(Web3SDK.providers, connected, disconnected, listening === false)
-    listening = true
+    network.connectCB(Web3SDK.providers, (newstate, session) => {
+      connected(newstate, session)
+      window.location.reload()
+    }, (newstate, error, session) => {
+      disconnected(newstate, error, session)
+      window.location.reload()
+    })
   })
 
   window.addEventListener('disconnect-click', _ => {
     disconnected({ connected: false, account: undefined, provider: undefined })
+    window.location.reload()
   })
 
   //------------------------------------------------------------------//
