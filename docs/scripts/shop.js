@@ -30,6 +30,8 @@ window.addEventListener('web3sdk-ready', async _ => {
     const search = index.read()['search(address,uint256,uint256,string[],string[])']
     const results = await search(usdc.address, 1, lastTokenId, traits, values)
 
+    let length = results.length
+
     for (const row of results) {
       let owner = null
       try {
@@ -37,6 +39,7 @@ window.addEventListener('web3sdk-ready', async _ => {
       } catch(e) {}
 
       if (row.minted && !owner) {
+        length --
         continue
       }
 
@@ -52,6 +55,8 @@ window.addEventListener('web3sdk-ready', async _ => {
         price: row.price
       })
     }
+
+    if (!length) return []
 
     return results
   }
