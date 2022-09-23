@@ -78,7 +78,10 @@
         <h1>How to Guides</h1>
         <section class="nav-left">
           <aside id="nav-update">
-            <a class="nav active" href="#usdc">
+            <a class="nav active" href="#gas">
+              How fix failed transactions?
+            </a>
+            <a class="nav" href="#usdc">
               How to buy Polygon USDC?
             </a>
             <a class="nav" href="#wallet-phone">
@@ -89,7 +92,60 @@
             </a>
           </aside>
           <main>
-            <div id="usdc" class="content active">
+            <div id="gas" class="content active">
+              <h1>How fix failed transactions?</h1>
+              
+              <p>
+                When minting Gems you may get failed transactions that 
+                would look similar to the following.
+              </p>
+              <img width="50%" src="https://user-images.githubusercontent.com/13969584/166109514-1ff9f8dd-32a0-43cd-889f-a1dd559d1ab2.png" />
+              <p>
+                This is a common error in Polygon. The answer is to 
+                simply increase your gas. The following instructions
+                describes how to do this.
+              </p>
+
+              <h2>How to increase gas in MetaMask browser (Laptop)?</h2>
+              <p>
+                Click on your account icon, then find "Advanced gas 
+                controls" under "Advanced" in the settings menu:
+              </p>
+              
+              <img width="50%" src="https://metamask.zendesk.com/hc/article_attachments/4614163826075/How_To_Enable_Gas_Controls.gif" />
+              <p>
+                Once you've flicked this switch, the option to 'Edit' 
+                gas will appear when sending a transaction: 
+              </p>
+              <img width="50%" src="data:image/png;base64,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" />
+              <p>
+                Clicking on 'edit' should allow you to modify the three 
+                applicable fields as follows:
+              </p>
+              <img width="50%" src="https://images.ctfassets.net/9sy2a0egs6zh/6c2nQDZgs8gcDQoCTx3GHM/e1cc7f8333573d82191b7b7112dc6833/Gas_Estimate_After.png" />
+              
+              <h2>How to increase gas in MetaMask mobile?</h2>
+              
+              <p>
+                MetaMask Mobile already has the ability to precisely 
+                configure gas built-in; you do not need to enable it in 
+                settings.
+              </p>
+              <p>
+                When you get to the final screen before sending your 
+                transaction, you will see an "Estimated gas fee". To the 
+                right, the fee will appear underlined in blue:
+              </p>
+              <img width="50%" src="https://metamask.zendesk.com/hc/article_attachments/4404419350043/mceclip0.png" />
+              <p>
+                Click on the fee, and a menu will appear with a slider, 
+                and another option to click on "Advanced Options". When 
+                you do, this menu will open and you will have the 
+                opportunity to customize your gas fully:
+              </p>
+              <img width="50%" src="https://metamask.zendesk.com/hc/article_attachments/4405718568987/mceclip1.jpg" />
+            </div>
+            <div id="usdc" class="content">
               <h1>How to buy Polygon USDC?</h1>
               
               <p>The easiest way to buy Polygon USDC is with <a href="https://ramp.network/buy/">Ramp</a>.</p>
