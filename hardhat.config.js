@@ -86,7 +86,7 @@ module.exports = {
   gasReporter: {
     currency: 'USD',
     coinmarketcap: process.env.BLOCKCHAIN_CMC_KEY,
-    gasPrice: 50
+    gasPrice: 20
   },
   etherscan: {
     // Your API key for Etherscan
