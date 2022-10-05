@@ -1,0 +1,13 @@
+.body .container {
+  padding: 50px 20px;
+}
+
+blockquote {
+  border-left: 10px solid #666666;
+  margin: 0;
+  padding: 20px;
+}
+
+.center {
+  text-align: center;
+}
